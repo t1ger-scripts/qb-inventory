@@ -660,6 +660,25 @@ end
 
 exports('CreateInventory', CreateInventory)
 
+--- Registers or updates an inventory entry.
+--- @param identifier string                      -- The unique identifier for the inventory.
+--- @param data table|nil                         -- Optional metadata for the inventory.
+---        @field label string|nil                -- Display label for the inventory.
+---        @field maxweight number|nil            -- Maximum weight capacity.
+---        @field slots number|nil                -- Number of inventory slots.
+function RegisterInventory(identifier, data)
+    if type(identifier) ~= "string" then return end
+    if not Inventories[identifier] then
+        CreateInventory(identifier, data)
+    else
+        Inventories[identifier].maxweight = (data and data.maxweight) or Config.StashSize.maxweight
+        Inventories[identifier].slots = (data and data.slots) or Config.StashSize.slots
+        Inventories[identifier].label = (data and data.label) or identifier
+    end
+end
+
+exports('RegisterInventory', RegisterInventory)
+
 --- Retrieves an inventory by its identifier.
 --- @param identifier string The identifier of the inventory to retrieve.
 --- @return table|nil - The inventory object if found, nil otherwise.
